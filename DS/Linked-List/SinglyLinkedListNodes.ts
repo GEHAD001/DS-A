@@ -9,8 +9,8 @@ class Node<T> {
 }
 
 export default class LinkedList<T> {
-  private head: Node<T> | null;
-  private tail: Node<T> | null;
+  head: Node<T> | null;
+  tail: Node<T> | null;
   length: number;
 
   constructor() {
@@ -30,6 +30,16 @@ export default class LinkedList<T> {
     }
 
     return iterator;
+  }
+
+  isContain(value: T) {
+    let iterator = this.head;
+    while (iterator !== null) {
+      if (iterator.value === value) return true;
+      iterator = iterator.next;
+    }
+
+    return false;
   }
 
   push(value: T) {
@@ -90,6 +100,21 @@ export default class LinkedList<T> {
     return this;
   }
 
+  slice(start: number = 0, end: number = this.length) {
+    if (start > end || start >= this.length || end > this.length || start < 0)
+      throw new Error("Start Should be less then number of elements");
+
+    let iterator = this.getByIndex(start);
+    const newLinkedList = new LinkedList<T>();
+
+    for (let i = start; i < end; i++) {
+      newLinkedList.push(iterator?.value!);
+      iterator = iterator?.next!;
+    }
+
+    return newLinkedList;
+  }
+
   print() {
     let values = "";
     let iterator = this.head;
@@ -105,7 +130,50 @@ export default class LinkedList<T> {
     return values;
   }
 
+  copy() {
+    const copyLinkedList = new LinkedList<T>();
+
+    let iterator = this.head;
+    while (iterator !== null) {
+      copyLinkedList.push(iterator.value);
+      iterator = iterator.next;
+    }
+
+    return copyLinkedList;
+  }
+
   state() {
     console.log(this.print(), ` | Elements: ${this.length}`);
   }
+}
+
+export function reverseLinkedList(list: LinkedList<any>) {
+  const copy = list.copy();
+
+  if (copy.length < 2) return copy;
+
+  // Pointers Setup
+  let prePtr = null;
+  let currentPtr = copy.head;
+  let nextPtr = copy.head?.next;
+
+  // Pointer Switch
+  copy.head = copy.tail;
+  copy.tail = currentPtr;
+
+  // Reverse Iterations
+  while (nextPtr !== null) {
+    // Change Pointer Direction
+    currentPtr!.next = prePtr;
+
+    // Slide Pointers
+    prePtr = currentPtr;
+    currentPtr = nextPtr!;
+    nextPtr = nextPtr?.next;
+  }
+
+  // last node reversing
+  currentPtr!.next = prePtr;
+
+  return copy;
 }
