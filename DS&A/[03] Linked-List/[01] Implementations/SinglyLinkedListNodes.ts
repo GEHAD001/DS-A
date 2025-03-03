@@ -142,6 +142,33 @@ export default class LinkedList<T> {
     return copyLinkedList;
   }
 
+  // Idea: Each Stack-Frame has Current Node & Pre Node, Then Start Reverse By Re-direct Current-Node Next Pointer To Pre-Node
+  reverse({
+    pre = null,
+    current = this.head,
+  }: {
+    pre?: Node<T> | null;
+    current?: Node<T> | null;
+  }) {
+    // Fall-Back when no Elements
+    if (current === null || this.length === 1) return;
+
+    // Base-Case (First Solution)
+    if (current?.next === null) {
+      current.next = pre;
+      this.head = current;
+      return current;
+    }
+
+    this.reverse({ pre: current, current: current?.next! });
+
+    // Can't reverse before recursive function, because other problem depends on the `NEXT` of `CURRENT` Node
+    current!.next = pre;
+
+    if (current?.next === null) this.tail = current;
+    return;
+  }
+
   state() {
     console.log(this.print(), ` | Elements: ${this.length}`);
   }
@@ -176,4 +203,41 @@ export function reverseLinkedList(list: LinkedList<any>) {
   currentPtr!.next = prePtr;
 
   return copy;
+}
+
+//! Failed
+// export function reverseLinkedListRecursively(
+//   currentNode: Node<any>
+// ): Node<any> {
+//   // Is Last Node ?
+//   if (currentNode.next === null) return currentNode;
+
+//   let nextNode: Node<any> = reverseLinkedListRecursively(currentNode.next);
+
+//   // re-direct pointer of next node to current node A -> B -> null TO A <-> B
+//   nextNode.next = currentNode;
+
+//   return currentNode;
+// }
+
+export function reverseLinkedListRecursively({
+  pre = null,
+  current,
+}: {
+  pre?: Node<any> | null;
+  current: Node<any>;
+}): [Node<any>, Node<any> | null] {
+  // Base-Case first time will reverse happen, then start reverse everything.
+  if (current.next === null) {
+    current.next = pre;
+    return [current, null];
+  }
+
+  let [head] = reverseLinkedListRecursively({
+    pre: current,
+    current: current.next,
+  });
+  current.next = pre;
+
+  return [head, current];
 }
