@@ -10,7 +10,7 @@ const bracketsMap: BracketsMapperType = {
   "]": "[",
 };
 
-function isValidEquation(equation: string) {
+export function isValidEquation(equation: string) {
   // Track bracket pairs using stack
   const stack = new StackArray<string>();
 

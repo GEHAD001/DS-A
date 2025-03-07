@@ -9,16 +9,17 @@ export function maxSumSubArray(
 
   if (!array.length) return null;
 
-  let max = sum(array.slice(0, windowSize));
-  let current = max;
+  let maxSum = sum(array.slice(0, windowSize));
+  let currentSum = maxSum;
 
   for (let i = 1; i <= array.length - windowSize; i++) {
-    current += array[i + windowSize - 1] - array[i - 1];
+    // nextSum = currentSum + index +1 - index -1
+    currentSum += array[i + windowSize - 1] - array[i - 1];
 
-    if (current > max) max = current;
+    if (currentSum > maxSum) maxSum = currentSum;
   }
 
-  return max;
+  return maxSum;
 }
 
 export function sum(array: number[]): number {
